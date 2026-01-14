@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { BookOpen, CheckCircle, XCircle, ArrowRight, Brain, RefreshCw, ChevronDown, ChevronUp, HelpCircle, List } from 'lucide-react';
+import { quizQuestions } from './questions';
 
 // --- DATA & CONTENT ---
 
@@ -62,51 +63,6 @@ const studyContent = [
       { term: 'Negating AND', example: 'Negation of "Tall AND Thin" is "Not Tall OR Not Thin" (Short or Fat).', note: "De Morgan's Law." },
       { term: 'Negating OR', example: 'Negation of "Shallow OR Polluted" is "Not Shallow AND Not Polluted" (Deep and Unpolluted).', note: 'Often phrased as "Neither... nor".' }
     ]
-  }
-];
-
-const quizQuestions = [
-  {
-    question: "Which logical expression best represents: \"It is raining, but the ground is dry\"?",
-    options: ["A ∨ B", "A ∧ B", "A → B", "A ↔ B"],
-    correct: 1,
-    explanation: "In logic, 'but' is treated exactly the same as 'and'. Both statements must be true for the sentence to be true."
-  },
-  {
-    question: "Translate: \"The ground being wet follows from it raining.\"",
-    options: ["Rain → Wet", "Wet → Rain", "Rain ∧ Wet", "Rain ↔ Wet"],
-    correct: 0,
-    explanation: "\"B follows from A\" translates to A → B. The condition (Rain) leads to the conclusion (Wet). The English phrasing puts the consequent first."
-  },
-  {
-    question: "Identify the antecedent (A) in: \"I will buy ice cream only if everyone passes.\"",
-    options: ["Everyone passes", "I will buy ice cream"],
-    correct: 1,
-    explanation: "The structure is \"A only if B\". Here, A is the event that happens only if the condition is met. A = Buying ice cream. B = Everyone passes."
-  },
-  {
-    question: "Select the correct negation for: \"The river is shallow or polluted.\"",
-    options: ["The river is not shallow or not polluted.", "The river is neither shallow nor polluted.", "The river is deep or unpolluted."],
-    correct: 1,
-    explanation: "To negate an OR (Disjunction), you must negate both parts and switch to AND. \"Neither shallow nor polluted\" implies Not Shallow AND Not Polluted."
-  },
-  {
-    question: "If A is 'It is windy' and B is 'It is cold', what is 'It is windy. Moreover, it is cold'?",
-    options: ["A ∨ B", "A → B", "A ∧ B", "B → A"],
-    correct: 2,
-    explanation: "Words like 'Moreover', 'In addition', and 'Also' are logically equivalent to Conjunction (AND). They simply add more true information."
-  },
-  {
-    question: "What is the logical equivalent of 'A is necessary and sufficient for B'?",
-    options: ["A → B", "B → A", "A ↔ B", "A ∧ B"],
-    correct: 2,
-    explanation: "Necessary (B → A) AND Sufficient (A → B) combines to form Equivalence (A ↔ B)."
-  },
-  {
-    question: "Which represents 'B is a necessary condition for A'?",
-    options: ["B → A", "A → B", "A ∧ B", "A ∨ B"],
-    correct: 1,
-    explanation: "If B is necessary for A, it means you cannot have A without B. If A is true, B *must* be true. Therefore, A → B."
   }
 ];
 
@@ -192,137 +148,165 @@ const StudyCard = ({ item }) => {
 };
 
 const QuizSection = () => {
-  const [currentQ, setCurrentQ] = useState(0);
-  const [selected, setSelected] = useState(null);
-  const [isCorrect, setIsCorrect] = useState(null);
-  const [score, setScore] = useState(0);
-  const [finished, setFinished] = useState(false);
+    const [operation, setOperation] = useState('conjunction');
+    const questions = useMemo(() => quizQuestions[operation] || [], [operation]);
+    
+    const [currentQ, setCurrentQ] = useState(() => Math.floor(Math.random() * (questions.length)));
+    const [selected, setSelected] = useState(null);
+    const [isCorrect, setIsCorrect] = useState(null);
+    const [score, setScore] = useState(0);
+    const [finished, setFinished] = useState(false);
+  
+    useEffect(() => {
+        setCurrentQ(Math.floor(Math.random() * (questions.length)));
+        setSelected(null);
+        setIsCorrect(null);
+      }, [operation, questions.length]);
+      
 
-  const handleAnswer = (index) => {
-    if (selected !== null) return;
-    setSelected(index);
-    const correct = index === quizQuestions[currentQ].correct;
-    setIsCorrect(correct);
-    if (correct) setScore(s => s + 1);
-  };
-
-  const nextQuestion = () => {
-    if (currentQ < quizQuestions.length - 1) {
-      setCurrentQ(c => c + 1);
+    const handleAnswer = (index) => {
+      if (selected !== null) return;
+      setSelected(index);
+      const correct = index === questions[currentQ].correct;
+      setIsCorrect(correct);
+      if (correct) setScore(s => s + 1);
+    };
+  
+    const nextQuestion = () => {
+      if (currentQ < questions.length - 1) {
+        setCurrentQ(c => c + 1);
+        setSelected(null);
+        setIsCorrect(null);
+      } else {
+        setFinished(true);
+      }
+    };
+  
+    const resetQuiz = () => {
+      setCurrentQ(0);
       setSelected(null);
       setIsCorrect(null);
-    } else {
-      setFinished(true);
-    }
-  };
-
-  const resetQuiz = () => {
-    setCurrentQ(0);
-    setSelected(null);
-    setIsCorrect(null);
-    setScore(0);
-    setFinished(false);
-  };
-
-  if (finished) {
-    const percentage = Math.round((score / quizQuestions.length) * 100);
-    
-    return (
-      <div className="max-w-xl mx-auto text-center py-12 px-6 bg-white rounded-2xl shadow-lg border border-slate-100 mt-8">
-        <div className="w-20 h-20 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
-          {percentage >= 70 ? <CheckCircle className="w-10 h-10" /> : <Brain className="w-10 h-10" />}
+      setScore(0);
+      setFinished(false);
+    };
+  
+    if (finished) {
+      const percentage = Math.round((score / questions.length) * 100);
+      
+      return (
+        <div className="max-w-xl mx-auto text-center py-12 px-6 bg-white rounded-2xl shadow-lg border border-slate-100 mt-8">
+          <div className="w-20 h-20 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+            {percentage >= 70 ? <CheckCircle className="w-10 h-10" /> : <Brain className="w-10 h-10" />}
+          </div>
+          <h2 className="text-3xl font-bold text-slate-900 mb-2">Quiz Complete!</h2>
+          <p className="text-lg text-slate-600 mb-8">
+            You scored <span className="font-bold text-blue-600">{score}</span> out of <span className="font-bold text-slate-900">{questions.length}</span> ({percentage}%)
+          </p>
+          <button 
+            onClick={resetQuiz}
+            className="inline-flex items-center gap-2 px-8 py-3 bg-blue-600 text-white font-medium rounded-full hover:bg-blue-700 hover:shadow-lg transition-all transform hover:-translate-y-0.5"
+          >
+            <RefreshCw className="w-5 h-5" /> Try Again
+          </button>
         </div>
-        <h2 className="text-3xl font-bold text-slate-900 mb-2">Quiz Complete!</h2>
-        <p className="text-lg text-slate-600 mb-8">
-          You scored <span className="font-bold text-blue-600">{score}</span> out of <span className="font-bold text-slate-900">{quizQuestions.length}</span> ({percentage}%)
-        </p>
-        <button 
-          onClick={resetQuiz}
-          className="inline-flex items-center gap-2 px-8 py-3 bg-blue-600 text-white font-medium rounded-full hover:bg-blue-700 hover:shadow-lg transition-all transform hover:-translate-y-0.5"
-        >
-          <RefreshCw className="w-5 h-5" /> Try Again
-        </button>
+      );
+    }
+  
+    const question = questions[currentQ];
+  
+    return (
+        <div className="max-w-3xl mx-auto">
+        <div className="mb-6">
+          <div className="flex flex-wrap justify-center gap-2">
+            {Object.keys(quizQuestions).map((op) => (
+              <button
+                key={op}
+                onClick={() => setOperation(op)}
+                className={`px-4 py-2 text-sm font-semibold rounded-full transition-colors ${
+                  operation === op
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-white text-slate-600 hover:bg-slate-100'
+                }`}
+              >
+                {op.charAt(0).toUpperCase() + op.slice(1)}
+              </button>
+            ))}
+          </div>
+        </div>
+  
+        <div className="mb-6 flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+          <span className="text-sm font-semibold text-slate-500 uppercase tracking-wide">Question {currentQ + 1} / {questions.length}</span>
+          <div className="flex items-center gap-2">
+             <span className="text-sm font-bold text-slate-700">Score: {score}</span>
+             <div className="w-24 h-2 bg-slate-100 rounded-full overflow-hidden">
+               <div 
+                  className="h-full bg-blue-500 transition-all duration-500" 
+                  style={{ width: `${((currentQ) / questions.length) * 100}%` }}
+               />
+             </div>
+          </div>
+        </div>
+  
+        <div className="bg-white p-6 md:p-8 rounded-2xl shadow-md border border-slate-200">
+          <h3 className="text-xl md:text-2xl font-bold text-slate-800 mb-8 leading-snug">{question.question}</h3>
+          
+          <div className="space-y-3">
+            {question.options.map((opt, idx) => (
+              <button
+                key={idx}
+                onClick={() => handleAnswer(idx)}
+                disabled={selected !== null}
+                className={`w-full p-5 text-left rounded-xl border-2 transition-all duration-200 group ${
+                  selected === null 
+                    ? 'border-slate-100 hover:border-blue-300 hover:bg-blue-50/50' 
+                    : selected === idx 
+                      ? isCorrect 
+                        ? 'border-green-500 bg-green-50 text-green-900'
+                        : 'border-red-500 bg-red-50 text-red-900'
+                      : idx === question.correct 
+                        ? 'border-green-500 bg-green-50 text-green-900'
+                        : 'border-slate-100 opacity-40'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-lg">{opt}</span>
+                  {selected === idx && (
+                    isCorrect ? <CheckCircle className="w-6 h-6 text-green-600" /> : <XCircle className="w-6 h-6 text-red-600" />
+                  )}
+                  {selected === null && (
+                    <div className="w-5 h-5 rounded-full border-2 border-slate-200 group-hover:border-blue-400" />
+                  )}
+                </div>
+              </button>
+            ))}
+          </div>
+  
+          {selected !== null && (
+            <div className="mt-8 p-6 bg-slate-50 rounded-xl border border-slate-200 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="flex gap-3 mb-2">
+                  <div className="mt-1">
+                      {isCorrect ? <CheckCircle className="w-5 h-5 text-green-600" /> : <Brain className="w-5 h-5 text-blue-600" />}
+                  </div>
+                  <div>
+                      <p className="font-bold text-slate-800">Explanation</p>
+                      <p className="text-slate-600 mt-1 leading-relaxed">{question.explanation}</p>
+                  </div>
+              </div>
+              
+              <div className="mt-6 flex justify-end">
+                <button 
+                  onClick={nextQuestion}
+                  className="flex items-center gap-2 px-8 py-3 bg-slate-900 text-white font-medium rounded-lg hover:bg-slate-800 transition-colors shadow-lg shadow-slate-200"
+                >
+                  {currentQ === questions.length - 1 ? "Show Results" : "Next Question"} <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     );
-  }
-
-  const question = quizQuestions[currentQ];
-
-  return (
-    <div className="max-w-3xl mx-auto">
-      <div className="mb-6 flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-        <span className="text-sm font-semibold text-slate-500 uppercase tracking-wide">Question {currentQ + 1} / {quizQuestions.length}</span>
-        <div className="flex items-center gap-2">
-           <span className="text-sm font-bold text-slate-700">Score: {score}</span>
-           <div className="w-24 h-2 bg-slate-100 rounded-full overflow-hidden">
-             <div 
-                className="h-full bg-blue-500 transition-all duration-500" 
-                style={{ width: `${((currentQ) / quizQuestions.length) * 100}%` }}
-             />
-           </div>
-        </div>
-      </div>
-
-      <div className="bg-white p-6 md:p-8 rounded-2xl shadow-md border border-slate-200">
-        <h3 className="text-xl md:text-2xl font-bold text-slate-800 mb-8 leading-snug">{question.question}</h3>
-        
-        <div className="space-y-3">
-          {question.options.map((opt, idx) => (
-            <button
-              key={idx}
-              onClick={() => handleAnswer(idx)}
-              disabled={selected !== null}
-              className={`w-full p-5 text-left rounded-xl border-2 transition-all duration-200 group ${
-                selected === null 
-                  ? 'border-slate-100 hover:border-blue-300 hover:bg-blue-50/50' 
-                  : selected === idx 
-                    ? isCorrect 
-                      ? 'border-green-500 bg-green-50 text-green-900'
-                      : 'border-red-500 bg-red-50 text-red-900'
-                    : idx === question.correct 
-                      ? 'border-green-500 bg-green-50 text-green-900'
-                      : 'border-slate-100 opacity-40'
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-medium text-lg">{opt}</span>
-                {selected === idx && (
-                  isCorrect ? <CheckCircle className="w-6 h-6 text-green-600" /> : <XCircle className="w-6 h-6 text-red-600" />
-                )}
-                {selected === null && (
-                  <div className="w-5 h-5 rounded-full border-2 border-slate-200 group-hover:border-blue-400" />
-                )}
-              </div>
-            </button>
-          ))}
-        </div>
-
-        {selected !== null && (
-          <div className="mt-8 p-6 bg-slate-50 rounded-xl border border-slate-200 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="flex gap-3 mb-2">
-                <div className="mt-1">
-                    {isCorrect ? <CheckCircle className="w-5 h-5 text-green-600" /> : <Brain className="w-5 h-5 text-blue-600" />}
-                </div>
-                <div>
-                    <p className="font-bold text-slate-800">Explanation</p>
-                    <p className="text-slate-600 mt-1 leading-relaxed">{question.explanation}</p>
-                </div>
-            </div>
-            
-            <div className="mt-6 flex justify-end">
-              <button 
-                onClick={nextQuestion}
-                className="flex items-center gap-2 px-8 py-3 bg-slate-900 text-white font-medium rounded-lg hover:bg-slate-800 transition-colors shadow-lg shadow-slate-200"
-              >
-                {currentQ === quizQuestions.length - 1 ? "Show Results" : "Next Question"} <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
+  };
 
 const ReferenceTable = () => (
   <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
