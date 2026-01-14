@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { BookOpen, CheckCircle, XCircle, ArrowRight, Brain, RefreshCw, ChevronDown, ChevronUp, HelpCircle, List } from 'lucide-react';
-import { quizQuestions } from './questions';
+import { BookOpen, CheckCircle, XCircle, ArrowRight, Brain, RefreshCw, ChevronDown, ChevronUp, HelpCircle, List, Pencil, Delete } from 'lucide-react';
+import { quizQuestions, translationExercises } from './questions';
 
 // --- DATA & CONTENT ---
 
@@ -56,12 +56,12 @@ const studyContent = [
   {
     id: 'negation',
     title: 'Negation',
-    symbol: "A' (or ¬A)",
+    symbol: "A'",
     summary: 'Reverses the truth value.',
     details: [
       { term: 'Not', example: 'It is not raining.' },
-      { term: 'Negating AND', example: 'Negation of "Tall AND Thin" is "Not Tall OR Not Thin" (Short or Fat).', note: "De Morgan's Law." },
-      { term: 'Negating OR', example: 'Negation of "Shallow OR Polluted" is "Not Shallow AND Not Polluted" (Deep and Unpolluted).', note: 'Often phrased as "Neither... nor".' }
+      { term: 'Negating AND', example: 'Negation of "Tall ∧ Thin" is "Tall\' ∨ Thin\'" (Short or Fat).', note: "De Morgan's Law." },
+      { term: 'Negating OR', example: 'Negation of "Shallow ∨ Polluted" is "Shallow\' ∧ Polluted\'" (Deep and Unpolluted).', note: 'Often phrased as "Neither... nor".' }
     ]
   }
 ];
@@ -69,22 +69,14 @@ const studyContent = [
 // --- UTILITIES ---
 function shuffleArray(array) {
     let currentIndex = array.length,  randomIndex;
-  
-    // While there remain elements to shuffle.
     while (currentIndex !== 0) {
-  
-      // Pick a remaining element.
       randomIndex = Math.floor(Math.random() * currentIndex);
       currentIndex--;
-  
-      // And swap it with the current element.
       [array[currentIndex], array[randomIndex]] = [
         array[randomIndex], array[currentIndex]];
     }
-  
     return array;
 }
-  
 
 // --- COMPONENTS ---
 
@@ -98,16 +90,16 @@ const Header = ({ setView, currentView }) => (
         <span>Discrete Math Logic</span>
       </h1>
       <nav className="flex bg-slate-800 p-1 rounded-lg">
-        {[
+        {[ 
           { id: 'study', label: 'Study', icon: BookOpen },
-          { id: 'practice', label: 'Practice', icon: HelpCircle },
+          { id: 'practice', label: 'Quiz', icon: HelpCircle },
+          { id: 'builder', label: 'Build', icon: Pencil },
           { id: 'reference', label: 'Reference', icon: List }
         ].map((item) => (
           <button
             key={item.id}
             onClick={() => setView(item.id)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-md font-medium text-sm transition-all duration-200 ${
-              currentView === item.id 
+            className={`flex items-center gap-2 px-4 py-2 rounded-md font-medium text-sm transition-all duration-200 ${ currentView === item.id 
                 ? 'bg-blue-600 text-white shadow-md' 
                 : 'text-slate-400 hover:text-white hover:bg-slate-700'
             }`}
@@ -257,8 +249,7 @@ const QuizSection = () => {
               <button
                 key={op}
                 onClick={() => setOperation(op)}
-                className={`px-4 py-2 text-sm font-semibold rounded-full transition-colors ${
-                  operation === op
+                className={`px-4 py-2 text-sm font-semibold rounded-full transition-colors ${ operation === op
                     ? 'bg-blue-600 text-white'
                     : 'bg-white text-slate-600 hover:bg-slate-100'
                 }`}
@@ -291,8 +282,7 @@ const QuizSection = () => {
                 key={idx}
                 onClick={() => handleAnswer(idx)}
                 disabled={selected !== null}
-                className={`w-full p-5 text-left rounded-xl border-2 transition-all duration-200 group ${
-                  selected === null 
+                className={`w-full p-5 text-left rounded-xl border-2 transition-all duration-200 group ${ selected === null 
                     ? 'border-slate-100 hover:border-blue-300 hover:bg-blue-50/50' 
                     : selected === idx 
                       ? isCorrect 
@@ -341,7 +331,191 @@ const QuizSection = () => {
         </div>
       </div>
     );
-  };
+};
+
+const BuilderSection = () => {
+    const [currentIdx, setCurrentIdx] = useState(0);
+    const [userInput, setUserInput] = useState('');
+    const [feedback, setFeedback] = useState(null); // 'correct', 'incorrect', null
+    const [completed, setCompleted] = useState(false);
+
+    const exercise = translationExercises[currentIdx];
+
+    const symbols = [
+        { label: 'p', value: 'p' },
+        { label: 'q', value: 'q' },
+        { label: 'r', value: 'r' },
+        { label: '∧', value: '∧' }, // AND
+        { label: '∨', value: '∨' }, // OR
+        { label: '→', value: '→' }, // IMPLIES
+        { label: '↔', value: '↔' }, // IFF
+        { label: "'", value: "'" }, // NOT
+        { label: '(', value: '(' },
+        { label: ')', value: ')' },
+    ];
+
+    const handleSymbolClick = (val) => {
+        if (feedback === 'correct') return;
+        setUserInput(prev => prev + val);
+        setFeedback(null);
+    };
+
+    const handleBackspace = () => {
+        if (feedback === 'correct') return;
+        setUserInput(prev => prev.slice(0, -1));
+        setFeedback(null);
+    };
+
+    const handleClear = () => {
+        if (feedback === 'correct') return;
+        setUserInput('');
+        setFeedback(null);
+    };
+
+    const checkAnswer = () => {
+        // Normalize: remove spaces
+        const normUser = userInput.replace(/\s+/g, '');
+        const normAns = exercise.answer.replace(/\s+/g, '');
+        // Note: Simple string match. A real logic checker would parse ASTs.
+        // For this level, exact symbol match is reasonably expected if UI provides symbols.
+        // We will allow flexible parenthesis if possible, but simpler to match string for now.
+
+        if (normUser === normAns) {
+            setFeedback('correct');
+        } else {
+            setFeedback('incorrect');
+        }
+    };
+
+    const nextExercise = () => {
+        if (currentIdx < translationExercises.length - 1) {
+            setCurrentIdx(c => c + 1);
+            setUserInput('');
+            setFeedback(null);
+        } else {
+            setCompleted(true);
+        }
+    };
+
+    const restartBuilder = () => {
+        setCurrentIdx(0);
+        setUserInput('');
+        setFeedback(null);
+        setCompleted(false);
+    };
+
+    if (completed) {
+        return (
+            <div className="max-w-xl mx-auto text-center py-12 px-6 bg-white rounded-2xl shadow-lg border border-slate-100 mt-8">
+                <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <CheckCircle className="w-10 h-10" />
+                </div>
+                <h2 className="text-3xl font-bold text-slate-900 mb-2">Practice Complete!</h2>
+                <p className="text-lg text-slate-600 mb-8">
+                    You have successfully translated all the sentences.
+                </p>
+                <button 
+                    onClick={restartBuilder}
+                    className="inline-flex items-center gap-2 px-8 py-3 bg-blue-600 text-white font-medium rounded-full hover:bg-blue-700 transition-all"
+                >
+                    <RefreshCw className="w-5 h-5" /> Start Over
+                </button>
+            </div>
+        );
+    }
+
+    return (
+        <div className="max-w-3xl mx-auto">
+            <div className="mb-6 flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                <span className="text-sm font-semibold text-slate-500 uppercase tracking-wide">Exercise {currentIdx + 1} / {translationExercises.length}</span>
+            </div>
+
+            <div className="bg-white p-6 md:p-8 rounded-2xl shadow-md border border-slate-200">
+                <div className="mb-8 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                    <p className="text-sm font-bold text-slate-500 uppercase mb-2">Context</p>
+                    <p className="text-lg text-slate-800 font-medium">{exercise.context}</p>
+                </div>
+
+                <div className="mb-8">
+                    <p className="text-sm font-bold text-slate-500 uppercase mb-2">Translate into Logic</p>
+                    <h3 className="text-2xl font-bold text-slate-900 leading-snug">"{exercise.question}"</h3>
+                </div>
+
+                {/* Input Area */}
+                <div className={`flex items-center justify-between p-4 rounded-xl border-2 mb-6 transition-all ${ feedback === 'correct' ? 'border-green-500 bg-green-50' : 
+                    feedback === 'incorrect' ? 'border-red-300 bg-white' : 'border-slate-300 bg-white' 
+                }`}>
+                    <div className="text-2xl font-mono tracking-wider min-h-[32px] w-full overflow-x-auto whitespace-nowrap">
+                        {userInput || <span className="text-slate-300 select-none">Tap symbols below...</span>}
+                    </div>
+                    <div className="flex gap-2 ml-4">
+                         {feedback === 'correct' && <CheckCircle className="w-6 h-6 text-green-600" />}
+                         {feedback === 'incorrect' && <XCircle className="w-6 h-6 text-red-500" />}
+                    </div>
+                </div>
+
+                {/* Keyboard */}
+                <div className="grid grid-cols-5 sm:grid-cols-10 gap-2 mb-6">
+                    {symbols.map((sym) => (
+                        <button
+                            key={sym.label}
+                            onClick={() => handleSymbolClick(sym.value)}
+                            disabled={feedback === 'correct'}
+                            className="p-3 bg-slate-100 hover:bg-blue-100 hover:text-blue-700 active:bg-blue-200 rounded-lg font-mono text-lg font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {sym.label}
+                        </button>
+                    ))}
+                </div>
+                
+                {/* Actions */}
+                <div className="flex justify-between items-center border-t border-slate-100 pt-6">
+                    <div className="flex gap-2">
+                        <button 
+                            onClick={handleBackspace} 
+                            disabled={!userInput || feedback === 'correct'}
+                            className="p-3 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-30"
+                            title="Backspace"
+                        >
+                            <Delete className="w-5 h-5" />
+                        </button>
+                        <button 
+                             onClick={handleClear}
+                             disabled={!userInput || feedback === 'correct'}
+                             className="px-4 py-2 text-slate-500 text-sm font-medium hover:text-slate-700"
+                        >
+                            Clear
+                        </button>
+                    </div>
+
+                    {feedback === 'correct' ? (
+                         <button 
+                            onClick={nextExercise}
+                            className="flex items-center gap-2 px-6 py-2 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 transition-colors"
+                        >
+                            Next <ArrowRight className="w-4 h-4" />
+                        </button>
+                    ) : (
+                        <button 
+                            onClick={checkAnswer}
+                            disabled={!userInput}
+                            className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            Check
+                        </button>
+                    )}
+                </div>
+
+                 {/* Hint / Incorrect Feedback */}
+                 {feedback === 'incorrect' && (
+                    <div className="mt-4 text-center text-red-600 text-sm font-medium animate-in fade-in slide-in-from-top-2">
+                        Not quite. Double check your connectives and negations.
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
 
 const ReferenceTable = () => (
   <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
@@ -434,6 +608,16 @@ export default function App() {
               <p className="text-slate-500 mt-2 text-lg">Test your ability to recognize logical structures in everyday language.</p>
             </div>
             <QuizSection />
+          </div>
+        )}
+
+        {view === 'builder' && (
+             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+             <div className="text-center mb-10">
+              <h2 className="text-3xl font-bold text-slate-900">Symbolic Translation Builder</h2>
+              <p className="text-slate-500 mt-2 text-lg">Construct logical formulas from English sentences using the symbol keyboard.</p>
+            </div>
+            <BuilderSection />
           </div>
         )}
 

@@ -28,7 +28,7 @@ export const quizQuestions = {
     },
     {
         question: "What is the logical meaning of \"Unless you study, you will fail\"?",
-        options: ["Study ∧ Fail", "¬Study → ¬Fail", "Study ∨ Fail", "Fail → Study"],
+        options: ["Study ∧ Fail", "Study' → Fail'", "Study ∨ Fail", "Fail → Study"],
         correct: 2,
         explanation: "'Unless P, Q' is logically equivalent to 'P or Q'. So, 'Study or Fail'."
     },
@@ -36,7 +36,7 @@ export const quizQuestions = {
         question: "If 'A' is 'The flight is on time' and 'B' is 'The flight is cancelled', which option is impossible for 'A ∨ B' to be false?",
         options: ["The flight is late but not cancelled", "The flight is on time and cancelled", "The flight is on time but late", "The flight is neither on time nor cancelled"],
         correct: 3,
-        explanation: "A disjunction (A ∨ B) is only false if BOTH A and B are false. 'Neither on time nor cancelled' means ¬A and ¬B, which makes the disjunction false."
+        explanation: "A disjunction (A ∨ B) is only false if BOTH A and B are false. 'Neither on time nor cancelled' means A' and B', which makes the disjunction false."
     }
   ],
   implication: [
@@ -65,95 +65,94 @@ export const quizQuestions = {
       explanation: "'Sufficient' directly translates to the first part of an implication. If A happens, it is enough to guarantee B. So, A → B."
     },
     {
-  question: "Rewrite the statement in the form 'If A, then B': 'Healthy plant growth follows from sufficient water.'",
-  options: [
-    "If healthy plant growth occurs, then there is sufficient water.",
-    "If there is sufficient water, then healthy plant growth occurs.",
-    "Healthy plant growth if and only if there is sufficient water.",
-    "If there is not sufficient water, then plants do not grow healthily."
+      question: "Rewrite the statement in the form 'If A, then B': 'Healthy plant growth follows from sufficient water.'",
+      options: [
+        "If healthy plant growth occurs, then there is sufficient water.",
+        "If there is sufficient water, then healthy plant growth occurs.",
+        "Healthy plant growth if and only if there is sufficient water.",
+        "If there is not sufficient water, then plants do not grow healthily."
+      ],
+      correct: 1,
+      explanation: "'B follows from A' means A → B. Here, sufficient water leads to healthy plant growth."
+    },
+    {
+      question: "Rewrite the statement in the form 'If A, then B': 'Increased availability of information is a necessary condition for further technological advances.'",
+      options: [
+        "If there are further technological advances, then information availability has increased.",
+        "If information availability increases, then technological advances occur.",
+        "If there are no technological advances, then information availability has not increased.",
+        "If information availability is necessary, then technology advances."
+      ],
+      correct: 0,
+      explanation: "If B is a necessary condition for A, then A → B. Technological advances require increased information availability."
+    },
+    {
+      question: "Rewrite the statement in the form 'If A, then B': 'Errors were introduced only if there was a modification of the program.'",
+      options: [
+        "If the program was modified, then errors were introduced.",
+        "If errors were introduced, then the program was modified.",
+        "If the program was not modified, then errors were introduced.",
+        "If errors were not introduced, then the program was modified."
+      ],
+      correct: 1,
+      explanation: "'A only if B' translates to A → B. Errors occurred only if the program was modified."
+    },
+    {
+      question: "Rewrite the statement in the form 'If A, then B': 'Fuel savings implies good insulation or storm windows throughout.'",
+      options: [
+        "If there is good insulation or storm windows, then there are fuel savings.",
+        "If there are fuel savings, then there is good insulation or storm windows.",
+        "Fuel savings if and only if there is good insulation or storm windows.",
+        "If there are no fuel savings, then there is no insulation and no storm windows."
+      ],
+      correct: 1,
+      explanation: "'Implies' directly indicates an implication. Fuel savings lead to good insulation or storm windows."
+    },
+    {
+      question: "Rewrite the statement in the form 'If A, then B': 'Candidate Lu winning the election will be a sufficient condition for property taxes to increase.'",
+      options: [
+        "If property taxes increase, then Candidate Lu won the election.",
+        "If Candidate Lu wins the election, then property taxes increase.",
+        "Candidate Lu wins the election only if property taxes increase.",
+        "Property taxes increase if and only if Candidate Lu wins."
+      ],
+      correct: 1,
+      explanation: "If A is a sufficient condition for B, then A → B. Lu winning guarantees increased property taxes."
+    },
+    {
+      question: "Rewrite the statement in the form 'If A, then B': 'The user clicks Pause only if the game level changes.'",
+      options: [
+        "If the game level changes, then the user clicks Pause.",
+        "If the user clicks Pause, then the game level changes.",
+        "The user clicks Pause if and only if the game level changes.",
+        "If the user does not click Pause, then the game level does not change."
+      ],
+      correct: 1,
+      explanation: "'A only if B' translates to A → B. Clicking Pause happens only when the level changes."
+    },
+    {
+      question: "Rewrite the statement in the form 'If A, then B': 'The components are scarce, therefore the price increases.'",
+      options: [
+        "If the price increases, then the components are scarce.",
+        "If the components are scarce, then the price increases.",
+        "The price increases only if the components are scarce.",
+        "The components are scarce if and only if the price increases."
+      ],
+      correct: 1,
+      explanation: "'Therefore' indicates a conclusion following from a condition. Scarcity leads to price increases."
+    },
+    {
+      question: "Rewrite the statement in the form 'If A, then B': 'Healthy hair is a necessary condition for good shampoo.'",
+      options: [
+        "If the shampoo is good, then hair is healthy.",
+        "If hair is healthy, then the shampoo is good.",
+        "Healthy hair if and only if the shampoo is good.",
+        "If hair is not healthy, then the shampoo is not good."
+      ],
+      correct: 0,
+      explanation: "If B is necessary for A, then A → B. Good shampoo requires healthy hair."
+    }
   ],
-  correct: 1,
-  explanation: "'B follows from A' means A → B. Here, sufficient water leads to healthy plant growth."
-},
-{
-  question: "Rewrite the statement in the form 'If A, then B': 'Increased availability of information is a necessary condition for further technological advances.'",
-  options: [
-    "If there are further technological advances, then information availability has increased.",
-    "If information availability increases, then technological advances occur.",
-    "If there are no technological advances, then information availability has not increased.",
-    "If information availability is necessary, then technology advances."
-  ],
-  correct: 0,
-  explanation: "If B is a necessary condition for A, then A → B. Technological advances require increased information availability."
-},
-{
-  question: "Rewrite the statement in the form 'If A, then B': 'Errors were introduced only if there was a modification of the program.'",
-  options: [
-    "If the program was modified, then errors were introduced.",
-    "If errors were introduced, then the program was modified.",
-    "If the program was not modified, then errors were introduced.",
-    "If errors were not introduced, then the program was modified."
-  ],
-  correct: 1,
-  explanation: "'A only if B' translates to A → B. Errors occurred only if the program was modified."
-},
-{
-  question: "Rewrite the statement in the form 'If A, then B': 'Fuel savings implies good insulation or storm windows throughout.'",
-  options: [
-    "If there is good insulation or storm windows, then there are fuel savings.",
-    "If there are fuel savings, then there is good insulation or storm windows.",
-    "Fuel savings if and only if there is good insulation or storm windows.",
-    "If there are no fuel savings, then there is no insulation and no storm windows."
-  ],
-  correct: 1,
-  explanation: "'Implies' directly indicates an implication. Fuel savings lead to good insulation or storm windows."
-},
-{
-  question: "Rewrite the statement in the form 'If A, then B': 'Candidate Lu winning the election will be a sufficient condition for property taxes to increase.'",
-  options: [
-    "If property taxes increase, then Candidate Lu won the election.",
-    "If Candidate Lu wins the election, then property taxes increase.",
-    "Candidate Lu wins the election only if property taxes increase.",
-    "Property taxes increase if and only if Candidate Lu wins."
-  ],
-  correct: 1,
-  explanation: "If A is a sufficient condition for B, then A → B. Lu winning guarantees increased property taxes."
-},
-{
-  question: "Rewrite the statement in the form 'If A, then B': 'The user clicks Pause only if the game level changes.'",
-  options: [
-    "If the game level changes, then the user clicks Pause.",
-    "If the user clicks Pause, then the game level changes.",
-    "The user clicks Pause if and only if the game level changes.",
-    "If the user does not click Pause, then the game level does not change."
-  ],
-  correct: 1,
-  explanation: "'A only if B' translates to A → B. Clicking Pause happens only when the level changes."
-},
-{
-  question: "Rewrite the statement in the form 'If A, then B': 'The components are scarce, therefore the price increases.'",
-  options: [
-    "If the price increases, then the components are scarce.",
-    "If the components are scarce, then the price increases.",
-    "The price increases only if the components are scarce.",
-    "The components are scarce if and only if the price increases."
-  ],
-  correct: 1,
-  explanation: "'Therefore' indicates a conclusion following from a condition. Scarcity leads to price increases."
-},
-{
-  question: "Rewrite the statement in the form 'If A, then B': 'Healthy hair is a necessary condition for good shampoo.'",
-  options: [
-    "If the shampoo is good, then hair is healthy.",
-    "If hair is healthy, then the shampoo is good.",
-    "Healthy hair if and only if the shampoo is good.",
-    "If hair is not healthy, then the shampoo is not good."
-  ],
-  correct: 0,
-  explanation: "If B is necessary for A, then A → B. Good shampoo requires healthy hair."
-}
-  ],
-  
   equivalence: [
     {
       question: "What is the logical equivalent of 'A is necessary and sufficient for B'?",
@@ -185,7 +184,7 @@ export const quizQuestions = {
       question: "Using De Morgan's laws, what is the negation of 'He is tall and handsome'?",
       options: ["He is short and ugly", "He is not tall or not handsome", "He is short or ugly", "He is neither tall nor handsome"],
       correct: 1,
-      explanation: "The negation of (A ∧ B) is (¬A ∨ ¬B). So we negate both attributes and change 'and' to 'or'."
+      explanation: "The negation of (A ∧ B) is (A' ∨ B'). So we negate both attributes and change 'and' to 'or'."
     },
     {
       question: "What is the negation of 'Julie likes butter but hates cream.'",
@@ -196,7 +195,7 @@ export const quizQuestions = {
         "Julie hates butter or likes cream."
       ],
       correct: 1,
-      explanation: "Let A be 'Julie likes butter' and B be 'Julie hates cream'. The statement is A ∧ B. Its negation is ¬A ∨ ¬B: Julie does not like butter OR Julie does not hate cream."
+      explanation: "Let A be 'Julie likes butter' and B be 'Julie hates cream'. The statement is A ∧ B. Its negation is A' ∨ B': Julie does not like butter OR Julie does not hate cream."
     },
     {
       question: "What is the negation of 'The answer is either 2 or 3.'",
@@ -207,7 +206,7 @@ export const quizQuestions = {
         "The answer is not 2 or is 3."
       ],
       correct: 1,
-      explanation: "Let A be 'The answer is 2' and B be 'The answer is 3'. The statement is A ∨ B. Its negation is ¬A ∧ ¬B: the answer is neither 2 nor 3."
+      explanation: "Let A be 'The answer is 2' and B be 'The answer is 3'. The statement is A ∨ B. Its negation is A' ∧ B': the answer is neither 2 nor 3."
     },
     {
       question: "What is the negation of 'Cucumbers are green and seedy.'",
@@ -218,7 +217,7 @@ export const quizQuestions = {
         "Cucumbers are green or seedy."
       ],
       correct: 1,
-      explanation: "Let A be 'Cucumbers are green' and B be 'Cucumbers are seedy'. The statement is A ∧ B. Its negation is ¬A ∨ ¬B: not green OR not seedy."
+      explanation: "Let A be 'Cucumbers are green' and B be 'Cucumbers are seedy'. The statement is A ∧ B. Its negation is A' ∨ B': not green OR not seedy."
     },
     {
       question: "What is the negation of '2 < 7 and 3 is odd.'",
@@ -229,7 +228,7 @@ export const quizQuestions = {
         "2 ≥ 7 or 3 is odd."
       ],
       correct: 1,
-      explanation: "Let A be '2 < 7' and B be '3 is odd'. The statement is A ∧ B. Negation: ¬A ∨ ¬B. Here ¬A is '2 ≥ 7' and ¬B is '3 is even'."
+      explanation: "Let A be '2 < 7' and B be '3 is odd'. The statement is A ∧ B. Negation: A' ∨ B'. Here A' is '2 ≥ 7' and B' is '3 is even'."
     },
     {
       question: "What is the negation of 'The carton is sealed or the milk is sour.'",
@@ -240,7 +239,7 @@ export const quizQuestions = {
         "The carton is neither sealed nor sour."
       ],
       correct: 0,
-      explanation: "Let A be 'The carton is sealed' and B be 'The milk is sour'. The statement is A ∨ B. Negation is ¬A ∧ ¬B: unsealed AND not sour."
+      explanation: "Let A be 'The carton is sealed' and B be 'The milk is sour'. The statement is A ∨ B. Negation is A' ∧ B': unsealed AND not sour."
     },
     {
       question: "What is the negation of 'If you build it, they will come.'",
@@ -251,7 +250,7 @@ export const quizQuestions = {
         "You build it only if they come."
       ],
       correct: 0,
-      explanation: "An implication A → B is negated as A ∧ ¬B. Here: You build it AND they do not come."
+      explanation: "An implication A → B is negated as A ∧ B'. Here: You build it AND they do not come."
     },
     {
       question: "What is the negation of 'If the food is good, then the service is excellent.'",
@@ -262,7 +261,7 @@ export const quizQuestions = {
         "The food is not good or the service is not excellent."
       ],
       correct: 0,
-      explanation: "Negation of A → B is A ∧ ¬B. Here: food is good AND service is not excellent."
+      explanation: "Negation of A → B is A ∧ B'. Here: food is good AND service is not excellent."
     },
     {
       question: "What is the negation of 'Either the food is good or the service is excellent.'",
@@ -273,7 +272,7 @@ export const quizQuestions = {
         "Neither the food is good nor the service is excellent."
       ],
       correct: 0,
-      explanation: "This is A ∨ B. Negation is ¬A ∧ ¬B: not good AND not excellent. (Option 4 is a rephrase but option 1 is the direct logical form.)"
+      explanation: "This is A ∨ B. Negation is A' ∧ B': not good AND not excellent. (Option 4 is a rephrase but option 1 is the direct logical form.)"
     },
     {
       question: "What is the negation of 'Either the food is good and the service is excellent, or else the price is high.'",
@@ -284,7 +283,7 @@ export const quizQuestions = {
         "The food is not good and the service is not excellent and the price is not high."
       ],
       correct: 1,
-      explanation: "Let A be '(food good ∧ service excellent)' and B be '(price high)'. Statement is A ∨ B. Negation is ¬A ∧ ¬B. By De Morgan, ¬A is (¬food good ∨ ¬service excellent), and ¬B is (price not high). So: (¬food good ∨ ¬service excellent) ∧ (price not high)."
+      explanation: "Let A be '(food good ∧ service excellent)' and B be '(price high)'. Statement is A ∨ B. Negation is A' ∧ B'. By De Morgan, A' is (food good' ∨ service excellent'), and B' is (price not high). So: (food good' ∨ service excellent') ∧ (price not high)."
     },
     {
       question: "What is the negation of 'Neither the food is good nor the service excellent.'",
@@ -295,7 +294,7 @@ export const quizQuestions = {
         "The food is not good and the service is not excellent."
       ],
       correct: 0,
-      explanation: "'Neither A nor B' means ¬A ∧ ¬B. Its negation is A ∨ B: the food is good OR the service is excellent."
+      explanation: "'Neither A nor B' means A' ∧ B'. Its negation is A ∨ B: the food is good OR the service is excellent."
     },
         {
       question: "What is the negation of 'The processor is fast but the printer is slow.'",
@@ -306,7 +305,7 @@ export const quizQuestions = {
         "The processor is fast or the printer is slow."
       ],
       correct: 0,
-      explanation: "Let P = 'processor is fast' and S = 'printer is slow'. The statement is P ∧ S ('but' = 'and'). The negation of P ∧ S is ¬P ∨ ¬S: processor not fast OR printer not slow."
+      explanation: "Let P = 'processor is fast' and S = 'printer is slow'. The statement is P ∧ S ('but' = 'and'). The negation of P ∧ S is P' ∨ S': processor not fast OR printer not slow."
     },
     {
       question: "What is the negation of 'The processor is fast or else the printer is slow.'",
@@ -317,7 +316,7 @@ export const quizQuestions = {
         "If the processor is fast, then the printer is slow."
       ],
       correct: 0,
-      explanation: "Let P = 'processor is fast' and S = 'printer is slow'. The statement is P ∨ S. The negation of a disjunction is ¬P ∧ ¬S: processor not fast AND printer not slow."
+      explanation: "Let P = 'processor is fast' and S = 'printer is slow'. The statement is P ∨ S. The negation of a disjunction is P' ∧ S': processor not fast AND printer not slow."
     },
     {
       question: "What is the negation of 'If the processor is fast, then the printer is slow.'",
@@ -328,7 +327,7 @@ export const quizQuestions = {
         "If the printer is slow, then the processor is fast."
       ],
       correct: 0,
-      explanation: "An implication P → S is negated as P ∧ ¬S. Here: processor is fast AND printer is not slow."
+      explanation: "An implication P → S is negated as P ∧ S'. Here: processor is fast AND printer is not slow."
     },
     {
       question: "What is the negation of 'Either the processor is fast and the printer is slow, or else the file is damaged.'",
@@ -339,7 +338,7 @@ export const quizQuestions = {
         "The file is not damaged or the processor is not fast or the printer is not slow."
       ],
       correct: 1,
-      explanation: "Let P = 'processor fast', S = 'printer slow', D = 'file damaged'. The statement is (P ∧ S) ∨ D. Negation is ¬((P ∧ S) ∨ D) = ¬(P ∧ S) ∧ ¬D = (¬P ∨ ¬S) ∧ ¬D."
+      explanation: "Let P = 'processor fast', S = 'printer slow', D = 'file damaged'. The statement is (P ∧ S) ∨ D. Negation is ((P ∧ S) ∨ D)' = (P ∧ S)' ∧ D' = (P' ∨ S') ∧ D'."
     },
     {
       question: "What is the negation of 'If the file is not damaged and the processor is fast, then the printer is slow.'",
@@ -350,7 +349,7 @@ export const quizQuestions = {
         "If the printer is slow, then the file is not damaged and the processor is fast."
       ],
       correct: 0,
-      explanation: "Let D = 'file damaged', P = 'processor fast', S = 'printer slow'. The statement is (¬D ∧ P) → S. Negation of A → B is A ∧ ¬B, so: (¬D ∧ P) ∧ ¬S."
+      explanation: "Let D = 'file damaged', P = 'processor fast', S = 'printer slow'. The statement is (D' ∧ P) → S. Negation of A → B is A ∧ S', so: (D' ∧ P) ∧ S'."
     },
     {
       question: "What is the negation of 'The printer is slow only if the file is damaged.'",
@@ -361,7 +360,60 @@ export const quizQuestions = {
         "If the file is damaged, then the printer is slow."
       ],
       correct: 0,
-      explanation: "'S only if D' translates to S → D. The negation of S → D is S ∧ ¬D: printer is slow AND file is not damaged."
+      explanation: "'S only if D' translates to S → D. The negation of S → D is S ∧ D': printer is slow AND file is not damaged."
     }
   ]
 };
+
+export const translationExercises = [
+    {
+        context: "Let p = \"It is raining\" and q = \"It is windy\".",
+        question: "It is raining and windy.",
+        answer: "p ∧ q"
+    },
+    {
+        context: "Let p = \"It is raining\" and q = \"It is windy\".",
+        question: "It is raining but not windy.",
+        answer: "p ∧ q'"
+    },
+    {
+        context: "Let p = \"You eat your vegetables\" and q = \"You get dessert\".",
+        question: "You get dessert only if you eat your vegetables.",
+        answer: "q → p"
+    },
+    {
+        context: "Let p = \"You eat your vegetables\" and q = \"You get dessert\".",
+        question: "You get dessert if you eat your vegetables.",
+        answer: "p → q"
+    },
+    {
+        context: "Let p = \"The printer is slow\" and q = \"The file is damaged\".",
+        question: "The printer is slow or the file is damaged.",
+        answer: "p ∨ q"
+    },
+    {
+        context: "Let p = \"The printer is slow\" and q = \"The file is damaged\".",
+        question: "Neither is the printer slow nor is the file damaged.",
+        answer: "p' ∧ q'"
+    },
+    {
+        context: "Let p = \"It is cold\" and q = \"It is snowing\".",
+        question: "It is cold and it is not snowing.",
+        answer: "p ∧ q'"
+    },
+    {
+        context: "Let p = \"It is cold\" and q = \"It is snowing\".",
+        question: "It is not the case that it is cold or snowing.",
+        answer: "(p ∨ q)'"
+    },
+    {
+        context: "Let p = \"You study\" and q = \"You pass\".",
+        question: "You pass if and only if you study.",
+        answer: "q ↔ p"
+    },
+    {
+        context: "Let p = \"It is sunny\" and q = \"It is warm\".",
+        question: "It is sunny but it is not warm.",
+        answer: "p ∧ q'"
+    }
+];
