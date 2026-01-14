@@ -66,6 +66,26 @@ const studyContent = [
   }
 ];
 
+// --- UTILITIES ---
+function shuffleArray(array) {
+    let currentIndex = array.length,  randomIndex;
+  
+    // While there remain elements to shuffle.
+    while (currentIndex !== 0) {
+  
+      // Pick a remaining element.
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+  
+      // And swap it with the current element.
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex], array[currentIndex]];
+    }
+  
+    return array;
+}
+  
+
 // --- COMPONENTS ---
 
 const Header = ({ setView, currentView }) => (
@@ -149,19 +169,25 @@ const StudyCard = ({ item }) => {
 
 const QuizSection = () => {
     const [operation, setOperation] = useState('conjunction');
-    const questions = useMemo(() => quizQuestions[operation] || [], [operation]);
-    
-    const [currentQ, setCurrentQ] = useState(() => Math.floor(Math.random() * (questions.length)));
+    const questions = useMemo(() => {
+        const allQuestions = quizQuestions[operation] || [];
+        const shuffled = shuffleArray([...allQuestions]);
+        return shuffled.slice(0, 10);
+      }, [operation]);
+      
+    const [currentQ, setCurrentQ] = useState(0);
     const [selected, setSelected] = useState(null);
     const [isCorrect, setIsCorrect] = useState(null);
     const [score, setScore] = useState(0);
     const [finished, setFinished] = useState(false);
   
     useEffect(() => {
-        setCurrentQ(Math.floor(Math.random() * (questions.length)));
+        setCurrentQ(0);
         setSelected(null);
         setIsCorrect(null);
-      }, [operation, questions.length]);
+        setScore(0);
+        setFinished(false);
+      }, [operation]);
       
 
     const handleAnswer = (index) => {
@@ -183,12 +209,13 @@ const QuizSection = () => {
     };
   
     const resetQuiz = () => {
-      setCurrentQ(0);
-      setSelected(null);
-      setIsCorrect(null);
-      setScore(0);
-      setFinished(false);
-    };
+        setOperation(op => op); // Re-trigger a shuffle
+        setCurrentQ(0);
+        setSelected(null);
+        setIsCorrect(null);
+        setScore(0);
+        setFinished(false);
+      };
   
     if (finished) {
       const percentage = Math.round((score / questions.length) * 100);
@@ -214,6 +241,14 @@ const QuizSection = () => {
   
     const question = questions[currentQ];
   
+    if (!question) {
+        return (
+            <div className="text-center">
+                <p>No questions available for this topic.</p>
+            </div>
+        )
+    }
+
     return (
         <div className="max-w-3xl mx-auto">
         <div className="mb-6">
